@@ -1,0 +1,218 @@
+[
+  {
+    "name": "sts_get_identity",
+    "service": "sts",
+    "method": "get_caller_identity",
+    "risk": "low",
+    "description": "Get current AWS account, role and user identity"
+  },
+
+
+  {
+    "name": "s3_list_buckets",
+    "service": "s3",
+    "method": "list_buckets",
+    "risk": "low",
+    "description": "List all accessible S3 buckets"
+  },
+  {
+    "name": "s3_list_objects",
+    "service": "s3",
+    "method": "list_objects_v2",
+    "risk": "medium",
+    "description": "List files inside S3 buckets"
+  },
+  {
+    "name": "s3_get_bucket_policy",
+    "service": "s3",
+    "method": "get_bucket_policy",
+    "risk": "medium",
+    "description": "Read bucket access policy"
+  },
+
+
+  {
+    "name": "ec2_describe_instances",
+    "service": "ec2",
+    "method": "describe_instances",
+    "risk": "medium",
+    "description": "View EC2 instances"
+  },
+  {
+    "name": "ec2_describe_security_groups",
+    "service": "ec2",
+    "method": "describe_security_groups",
+    "risk": "medium",
+    "description": "View firewall rules"
+  },
+  {
+    "name": "ec2_describe_volumes",
+    "service": "ec2",
+    "method": "describe_volumes",
+    "risk": "medium",
+    "description": "View attached storage volumes"
+  },
+
+
+  {
+    "name": "lambda_list_functions",
+    "service": "lambda",
+    "method": "list_functions",
+    "risk": "medium",
+    "description": "List Lambda functions"
+  },
+  {
+    "name": "lambda_get_function",
+    "service": "lambda",
+    "method": "get_function",
+    "risk": "high",
+    "description": "Read Lambda configuration/code location"
+  },
+
+
+  {
+    "name": "iam_get_user",
+    "service": "iam",
+    "method": "get_user",
+    "risk": "low",
+    "description": "Get current IAM user information"
+  },
+  {
+    "name": "iam_list_roles",
+    "service": "iam",
+    "method": "list_roles",
+    "risk": "medium",
+    "description": "Enumerate IAM roles"
+  },
+  {
+    "name": "iam_list_users",
+    "service": "iam",
+    "method": "list_users",
+    "risk": "medium",
+    "description": "Enumerate IAM users"
+  },
+  {
+    "name": "iam_list_policies",
+    "service": "iam",
+    "method": "list_policies",
+    "risk": "medium",
+    "description": "List IAM policies"
+  },
+
+
+  {
+    "name": "cloudwatch_list_metrics",
+    "service": "cloudwatch",
+    "method": "list_metrics",
+    "risk": "low",
+    "description": "View CloudWatch metrics"
+  },
+
+
+  {
+    "name": "logs_describe_log_groups",
+    "service": "logs",
+    "method": "describe_log_groups",
+    "risk": "medium",
+    "description": "List CloudWatch log groups"
+  },
+
+
+  {
+    "name": "ssm_describe_parameters",
+    "service": "ssm",
+    "method": "describe_parameters",
+    "risk": "medium",
+    "description": "List Systems Manager parameters"
+  },
+
+
+  {
+    "name": "secretsmanager_list_secrets",
+    "service": "secretsmanager",
+    "method": "list_secrets",
+    "risk": "medium",
+    "description": "List available secrets"
+  },
+
+
+  {
+    "name": "kms_list_keys",
+    "service": "kms",
+    "method": "list_keys",
+    "risk": "medium",
+    "description": "List encryption keys"
+  },
+
+
+  {
+    "name": "cloudformation_list_stacks",
+    "service": "cloudformation",
+    "method": "list_stacks",
+    "risk": "medium",
+    "description": "List CloudFormation stacks"
+  },
+
+
+  {
+    "name": "dynamodb_list_tables",
+    "service": "dynamodb",
+    "method": "list_tables",
+    "risk": "medium",
+    "description": "List DynamoDB tables"
+  },
+
+
+  {
+    "name": "sns_list_topics",
+    "service": "sns",
+    "method": "list_topics",
+    "risk": "low",
+    "description": "List SNS notification topics"
+  },
+
+
+  {
+    "name": "sqs_list_queues",
+    "service": "sqs",
+    "method": "list_queues",
+    "risk": "low",
+    "description": "List SQS queues"
+  },
+
+
+  {
+    "name": "ecr_describe_repositories",
+    "service": "ecr",
+    "method": "describe_repositories",
+    "risk": "medium",
+    "description": "List container repositories"
+  },
+
+
+  {
+    "name": "eks_list_clusters",
+    "service": "eks",
+    "method": "list_clusters",
+    "risk": "medium",
+    "description": "List Kubernetes clusters"
+  },
+
+
+  {
+    "name": "rds_describe_instances",
+    "service": "rds",
+    "method": "describe_db_instances",
+    "risk": "medium",
+    "description": "View databases"
+  },
+
+
+  {
+    "name": "route53_list_zones",
+    "service": "route53",
+    "method": "list_hosted_zones",
+    "risk": "medium",
+    "description": "View DNS zones"
+  }
+]

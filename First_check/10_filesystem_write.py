@@ -1,0 +1,1 @@
+open("/tmp/test","w").write("x")
