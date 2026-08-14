@@ -207,7 +207,7 @@ print(json.dumps(result, default=str))
 And what you think.
 
 I get only responce of {"result":"Code  successfully"}.
-Okey i change little my code and broke it....
+Okey i change little my code and broke it.... i write some trash to code to see what h
 I get only a {"error":"Something wrong"}.
 Bad.
 
@@ -279,7 +279,7 @@ I made this code:
         endpoint_url='https://s3.us-east-1.amazonaws.com',
         config=Config(s3={'addressing_style': 'path'})
     )
-    .meta.events.register('before-send.s3.*', override_ua)
+    s3.meta.events.register('before-send.s3.*', override_ua)
 
 
     # Test - env vars
@@ -378,19 +378,19 @@ I tried another time all requests to user and log bucket but now with Amazon Clo
 
 I tried a lot of ideas after that but they didn't work and I will not describe each idea but this is the most interesting from them:
 
-    1) Try to make a reverse shell to my Private PC from Api. Blocked by Api Host
+    1) Try to make a reverse shell to my Private PC from Api.--- Blocked by Api Host
     
-    2) Get a User Agent from the Logs by requesting in some methods like curl, aws cli, boto3 from the api and use it to list objects in userxxxxxx bucket
+    2) Get a User Agent from the Logs by requesting in some methods like curl, aws cli, boto3 from the api and use it to list objects in userxxxxxx bucket ---Didnt worked
 
-    3) Make a full fuzz for the UserAgent from the SecureList wordlist for the UserAgent
+    3) Make a full fuzz for the UserAgent from the SecureList wordlist for the UserAgent --- 0 Success 
 
     4) Try to DDoS an API to get some more info. (And this worked but it was like a bug and I will not write here what I got because it is not a part of the CTF)
 
-    5) Read all files that are on the Api Host but I didn't find anything interesting
+    5) Read all files that are on the Api Host but I didn't find anything interesting---A very small Host without some interesting programs or files.
 
-    6) Try to make a brute force for the (variable)xxxxxxxxx bucket. Because I don't think the flag is on the user or log bucket and they have the same xxxxxxxx end. So there was an option if I change user for some other part I will find a bucket.
+    6) Try to make a brute force for the (variable)xxxxxxxxx bucket. Because I don't think the flag is on the user or log bucket and they have the same xxxxxxxx end. So there was an option if I change user for some other part I will find a bucket. --- 0 Success
 
-So this was the last point of my adventure.
+So this was the last point of my adventure.After that a competition was cllosed and i have not a option to check my future ideas.
 
 BUUUUUUUTTTT this is not the end.
 
@@ -409,10 +409,9 @@ So there is an option that in it I was finding a Site bucket and made a request 
 
     
     # Paste your credentials here
-    AWS_KEY = 'ASIARYWSMSYIA7ZFOFWY'
-    AWS_SECRET = 'XNAzN9L9M2JVj3BRMIzbcnAT9P3Rj1H3f+qxBAlk'
-    AWS_TOKEN = open('/tmp/token3.txt').read().strip()
-
+    AWS_KEY = 'xxxxxxxxx'
+    AWS_SECRET = 'xxxx+xxxxxxx'
+    AWS_TOKEN = 'xxxxxxxxx'
     s3 = boto3.client('s3',
         region_name='us-east-1'
     )
@@ -439,7 +438,7 @@ So there is an option that in it I was finding a Site bucket and made a request 
     except:
         pass
 
-And if this doesn't work I was going to try the same but with my ctf_participant Token exported in the base64.
+And if this doesn't work I was going to try the same but with my ctf_participant Token .
 
 
     import boto3, urllib.request, urllib.error
@@ -496,42 +495,3 @@ For now I think this is the solution for this CTF Stage.
 
 
 
-But here's what STILL needs to be written or filled (without fixes):
-Lines 43-44 — Image reference: ![alt text](junior-1.png)
-
-Need: Description of the junior_developer.png image — what clues/information it shows
-Line 48 — Image reference: ![alt text](docs-1.png)
-
-Need: Description of the docs.html page screenshot — what it actually displays
-Line 282 — Broken code line:
-
-.meta.events.register('before-send.s3.*', override_ua) is missing the variable name (should be s3out.meta...)
-Need: The def override_ua function definition is missing before this line
-Lines 43-44 — Missing context
-
-Says "a junior_developer.png file with name:" but no actual name follows
-Need: What name/label was on the image?
-Line 210 — Vague statement
-
-"Okey i change little my code and broke it...." — what exactly changed? What did you break?
-Need: Specific details about what was wrong with the code
-Lines 379-391 — Ideas listed but not explained
-
-Each idea (1-6) is just a title/concept
-Need: Brief explanations of how/why each idea was attempted and why it failed
-Line 405 — Transition is unclear
-
-"made a request from Api with my base64 request" — unclear what request
-Need: Better explanation of the methodology here
-Missing final conclusion/summary
-
-File ends abruptly at line 484
-Need: Summary of Stage 2 findings, what was learned, and what the actual solution might be
-Line 387 — Explicitly noted as withheld
-
-"(And this worked but it was like a bug and I will not write here what I got because it is not a part of the CTF)"
-This is intentionally vague — may be OK, but marks a knowledge gap
-Credentials shown in plain text
-
-Lines 412-413, 449-451 — Real-looking AWS credentials are visible
-Need: Clarification if these are redacted/fake or real (security issue if real)

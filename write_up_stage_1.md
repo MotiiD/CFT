@@ -14,19 +14,165 @@ After registration we get access for the 1 stage and get a short description and
 1).git zip file 
 2)User code like:000994****\
 
-I downloaded a git folder and opened it with a git program for soft using and checking 
+I downloaded a git folder and opened it with a gitg program for soft using with gui and checking a commits.
 
 In the git history we see couple of commits and I found a couple that were interesting;
-1)this is  a lambda_function.py 
-2)policy file of aws.
+1)lambda_function.py 
+2)2 policy files of aws.
+3)github.tf
+4)main.tf
 
-a code we will use in the future but we start with the policy file.
+This is a code:
 
-in the file we see a line:
-include a line of corgi
-that says to us that we can get credentials to some aws if we make a request from some repo with the branch with name corgi.
+    import subprocess
+    import logging
 
-I made a some test repo on github and made a first deploy.yml file to check if this works.
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    def run_command(command):
+        try:
+            logger.info("Running shell command: \"{}\"".format(command))
+            result = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
+            logger.info("Command output:\n---\n{}\n---".format(result.stdout.decode('UTF-8')))
+        except Exception as e:
+            logger.error("Exception: {}".format(e))
+            return False
+
+        return True
+
+    def lambda_handler(event, context):
+        # I've added a layer to the Lambda function that includes the awscli package.
+        # This allows us to run shell commands like 'aws s3' directly, for future functionality I haven't of yet.
+        # It is installed under the /opt directory in the Lambda environment.
+        
+        domain = event.get('domain')
+        run_command('nslookup' + domain)
+
+We have a 2 files of policy:
+ci_cd policy
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "Statement1",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:*",
+                    "lambda:*",
+                    "apigateway:*",
+                    "iam:*",
+                    "ec2:*",
+                    "cloudfront:*"
+                ],
+                "Resource": "*",
+                "Condition": {
+                    "StringEquals": {
+                        "aws:SourceVpc": "${vpc}"
+                    }
+                }
+            },
+            {
+                "Sid": "Statement2",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:ListBucket",
+                    "s3:ListAllMyBuckets",
+                    "s3:GetBucketPolicy",
+                    "s3:GetBucketPolicyStatus",
+                    "lambda:ListFunctions",
+                    "lambda:GetFunction",
+                    "lambda:GetPolicy",
+                    "lambda:GetFunctionConfiguration",
+                    "ec2:Describe*",
+                    "cloudfront:GetDistribution",
+                    "cloudfront:ListDistributions"
+
+                ],
+                "Resource": [
+                    "*"
+                ]
+            },
+            {
+                "Sid": "Statement3",
+                "Effect": "Allow",
+                "Action": "iam:PassRole",
+                "Resource": "*",
+                "Condition": {
+                    "StringEquals": {
+                        "iam:PassedToService": [
+                            "lambda.amazonaws.com",
+                            "codebuild.amazonaws.com"
+                        ],
+                        "aws:SourceVpc": "${vpc}"
+                    },
+                    "ArnLike": {
+                        "iam:AssociatedResourceARN": [
+                            "arn:aws:lambda:*:${account_id}:function:*",
+                            "arn:aws:codebuild:*:${account_id}:project/*"
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+Here we see a 3 Statemnets:
+1)Can made all action but for it need to made them from the vpc host:"Condition": {
+                    "StringEquals": {
+                        "aws:SourceVpc": "${vpc}"
+2)Made some specific action without a condition 
+3)Claude write what made a 3 statemnet
+
+and 
+
+cicd-trust-policy
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Federated": "arn:aws:iam::${account_id}:oidc-provider/token.actions.githubusercontent.com"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                    "StringEquals": {
+                        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                    },
+                    "StringLike": {
+                        "token.actions.githubusercontent.com:sub": "repo:*/*:ref:refs/heads/corgi"
+                    }
+                }
+            }
+        ]
+    }
+
+In main.tf we see only:
+
+    locals {
+    policyend = "RolePolicy"
+    roleend   = "Role"
+    }
+
+And in github.tf we see a:
+
+    cicd_role = {
+        role_name   = "cicd${local.roleend}"
+        policy_name = "cicd${local.policyend}"
+        policy_path = "/cicd/"
+    }
+
+So from main.tf and github.tf we find a Role :cicd${local.roleend} = cicdRole
+
+Here we see that is a Statement that give to made a sts:AssumeRoleWithWebIdentity from token.actions.githubusercontent.com:sub": "repo:*/*:ref:refs/heads/corgi that say that we can get a aws credentials if we made a action from the github actions from the some repo but with the corgi name branch.
+
+So i will try to made some repo and made a branch corgi on it.
+After that i create a deploy.yml file that made a request for AWS.
+Role we get for the main and github terraform files.
+And Account Id we get from the page oof the MAFAT CTF.
+
 I made a request for AWS Credentials with a user that we got from the site with role of cicdRole that we found in the file of .git in the file xxxxxxx
 
 
@@ -780,35 +926,23 @@ Okay, we start to checking with this code that we run on local pc that made an a
 and after 15 minutes I get a FLLLLLLAGGGG!
 I put it to the site and go to the second stage of competition.
 
-See a Write-Up of the Competition Here:xxxxxxxx
+
+
+
+So In the Summary:
+
+We get a .git file that from him we get a data for creating a debploy.yml and get a first entry to aws infrastructure.
+After that we find a 3 buckets that on one of the we see a flag.txt in 16 byte size.
+With aws cloudfront we find a domain of some site and from his source code we find a https://3q931syi7b.execute-api.us-east-1.amazonaws.com/dev/nslookup api that responce only  "WIP" - (Work In Progress).
+In the .git we saw a lamda_function code that execute a nslookup + "domain". Domain he get from the api. So we can made a injection in it and run our commands.
+We can not to get a output so we try to use a time-based data transfer with using of sleep.
+And in the end scipt that run a binary searchthat based on the time-based data transfer give to us a flag.
+
+
+
+See a Write-Up of the Competition Stage 2 Here:xxxxxxxx
 
 
 
 
 
-Line 461-466 — Partial VPC explanation
-
-Currently has basic bullet points but missing key context about:
-Security Group detailed analysis (why the lambda_sg is important)
-Connection to the binary search exploit methodology
-The explanation cuts off abruptly after point 2
-Line 25-26 — Description of corgi branch reference
-
-Says "include a line of corgi" — should clarify what specific line/content in the policy file or git config shows this
-Line 602-604 — Screenshot/image description
-
-References ![alt text](image.png) but the actual image is missing and needs description of what the NSLOOKUP frontend looks like
-Line 20 — Lambda function code not shown
-
-Mentions "lambda_function.py" was found but the actual Python code is never displayed or explained
-Should show what the function does
-No summary/recap section at end
-
-The writeup ends abruptly at line 783 after completing the exploit
-Missing: conclusion about the technique used, key learnings, or bridge to Stage 2
-Minor detail on line 17 — "git program for soft using and checking"
-
-Should specify which program (GitHub Desktop, GitKraken, etc.) or clarify if this is just describing the general process
-Missing explanation of the Layers (lines 163-171)
-
-The output shows Lambda Layers (aws_cli_layer, nslookup_layer) but never explains why these are important or what they enable
