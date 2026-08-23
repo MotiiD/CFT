@@ -1,0 +1,161 @@
+1)Add a project for the Lnk.
+2)Made a post for projects.
+File Bus pipeline infrastrucure.
+Project is a solution for the automation control of the hosts from on master with using of SMB (Folder Sharing)and without  of using of TCP/IP protoclols NAPRYAMUU.
+Solution is for the networks that have a local network but connection for the Master server is out of the network and only connecting part is a same Shared Folder.
+App Use a Json files to manage a Pipeline.That mean:send command,get responces,check status.
+App builded from to part-apps.Manager and Worker. Manager is a Master(Server)and he send a coomands , get a responces for this commands and show them to the user.
+Worker is the app for the end-hosts that used like a agent. He run a pipelines from the commands,senda responces,and send his status for the Manager.
+Each worker have a Unig ID and Group ID that give to manager option to run a commands on specific Hosts or Group of Hosts.
+Each app have a config tab that give to user in user-friendluy desigh to config a infrastructure and Pipelines for his network.Config include:
+Custom groups for Pipelines,ID of the Hosts,Pipeline configs and commands,Configs for the Shared Folder.
+Project use:Pyhton,.....
+
+
+
+
+	AI VERS:
+	
+	
+	File Bus Pipeline Infrastructure
+
+Master–agent automation platform for networks where the master has no TCP/IP access to endpoints — the only shared channel is an SMB folder. Commands, responses and status flow through it as JSON files.
+
+Manager dispatches commands and shows host status; Worker runs on each host as an agent, executes pipelines and reports back. Each Worker has a Host ID + Group ID for single-host or group targeting. A built-in Config tab lets the operator set up groups, hosts, pipelines and the shared folder without touching code.
+
+Stack: Python, PyQt6, PyInstaller, JSON, SMB, PyVISA / pyserial.
+
+
+
+Short version — LinkedIn post
+File Bus Pipeline Infrastructure — JSON-over-SMB automation
+
+Built a platform to control distributed hosts from a single master in networks where direct TCP/IP is not allowed. The only shared surface is an SMB folder, and everything — commands, responses, status, pipelines — moves through it as JSON files.
+
+Two apps:
+
+Manager (master) — dispatches commands, collects responses, monitors the fleet.
+Worker (agent) — executes pipelines on the endpoint and reports status back.
+Each Worker has a unique Host ID and Group ID, so the Manager can hit one host, a group, or the whole fleet. A user-friendly Config tab in both apps lets the operator define groups, hosts, pipelines, commands and shared-folder settings — no code changes.
+
+Perfect for air-gapped or segmented networks where SSH / WinRM / agents-over-TCP simply aren't an option.
+
+Stack: Python, PyQt6, pystray, PyInstaller, JSON, SMB, PyVISA / pyserial.
+                                      
+
+
+TCG tool 
+Project is a solutiong for the User fiendly Tool for Telemetry and Config of devices that use a ASCII command protocol (line-oriented) that look like:
+FTG 1,0,0,G,123.23.1.1,GOOD,010101,1.
+Tool take a line command and transmit in to the program by translating from the config of program(with option to change a config per solution)to the UI.
+Tool give option to  made a config of commnads that user can send from the App.
+App include a 3 types of Protocols:
+Serial,SSH,UDP.
+App include a couple of fiture:
+1)Slide of translated data
+2)Slide of the translated data with a SVETOFOR DESIGH
+3)Slide of Config on Serial and UDP
+4)Slide of Config on SSH(With a full ssh termianl for using)
+5)Slide of Serial Termina(Full Serial termianl for using)
+6)Slide of Config tha tuser can made a cutom config for his needs.
+Project based on the Web Intarface and can be connected with HTTP.
+Project use:Python,FASTAPI, HTML,CSS,JAVASCRIPT......
+
+
+	AI VERS:
+	Short version (LinkedIn "Projects" section)
+File Bus — Pipeline Infrastructure
+
+File Bus is an automation tool that lets one master control many hosts without direct TCP/IP — all communication runs through a shared folder (SMB) used as a message bus. It uses JSON-driven pipelines to send commands, collect responses, and monitor host status. Built as two Python apps: a Manager (sends commands, shows results) and a Worker agent (runs pipelines, reports status). Hosts are targeted by Unique ID or Group ID, and both apps include a user-friendly config UI. Tech: Python.
+
+Longer version (LinkedIn post)
+🚀 Just built File Bus — a Pipeline Infrastructure for controlling hosts without a direct network connection.
+
+The problem: sometimes your master server sits outside the local network of the machines you need to manage, and the only thing both sides share is a shared folder. No direct TCP/IP, no open ports, no SSH.
+
+So I made the shared folder itself the message bus. 📁
+
+Here's how File Bus works:
+🔹 Communication happens entirely through an SMB shared folder — no direct connections between master and hosts.
+🔹 Everything is driven by JSON pipelines: send command → get response → check status.
+🔹 It's split into two apps:
+• Manager (master) — sends commands, collects responses, and shows everything to the user.
+• Worker (agent) — runs the command pipelines on each host, sends back responses, and reports its status.
+🔹 Every Worker has a Unique ID and a Group ID, so the Manager can target a single host or a whole group at once.
+🔹 Both apps ship with a user-friendly config UI to set up groups, host IDs, pipelines, commands, and the shared-folder connection.
+
+Ideal for air-gapped or segmented networks where direct connectivity isn't an option but file sharing is. 🔒
+
+Built with Python. 🐍
+
+
+                                      
+
+
+Radio Network planning tool.
+Project is a solution for one of the Radio Network froject for the creating of one time config for the devices in the Netwokr.
+Before for each device in the network user was need to made a config of Routs,IP,OSPF groups,Route Groups.
+And tool was made a modular config that is uploaded to devices and by idenificator take a relevant configs.
+Specility of the tool that a logic of the creating a config file is with a lot of exeption,validation and range control and in the same time he need to get in some configs until 1000 values and to give a soft form for show until 1000 valuse on the screen.
+In the end tool take all config and generate a config file and realese pdf with  descr.
+ Project use:Python,......
+ 
+ 
+ AI VERS:
+ Short version — LinkedIn Project section
+Radio Network Planning Tool — a PyQt6 desktop app that replaces manual, per-device network setup with a single modular configuration. The user designs the whole network once, and each device auto-loads its relevant settings by identifier. Features a validation-heavy engine with IP/multicast range and overlap control, scales to ~1,000 values with a smooth real-time UI, and exports a modular .ipi (XML) file plus CSV reports.
+
+Tech: Python, PyQt6, XML, CSV, JSON, PyInstaller.
+
+Longer version — LinkedIn Post
+🚀 Excited to share a tool I built: a Radio Network Planning Tool.
+
+In this network, every device used to be configured by hand — routes, IPs, OSPF groups, and route-groups, one device at a time. It was slow and error-prone.
+
+So I built a desktop application that flips the process: instead of configuring each device separately, you design the entire network once. The tool generates a single modular configuration file, and each device automatically loads only the settings relevant to it, based on its identifier.
+
+The hardest and most interesting part was the configuration engine. It's built around strict correctness:
+✅ Extensive validation and exception handling
+✅ Range & overlap control for IP ranges, multicast, subnets, and next-hops
+✅ Uniqueness and naming rules
+
+On top of that, it had to scale to ~1,000 configuration values while still feeling smooth to use — so the UI is fully tabbed and scrollable, with real-time field validation that guides the user as they type.
+
+When the design is ready, the tool generates a modular .ipi file (XML) and CSV exports for Sites and Route-Groups, ready to deploy.
+
+Tech stack: Python · PyQt6 · XML · CSV · JSON · PyInstaller
+
+
+                                      
+
+MISHMARON
+Project is a solution for free infrastucure for the shift orchistrator and auto shedule helped that made a shedule for the shift by ruls from the user.
+Project include a Telegram bot ,REST-api server, backend server,Database , web fron end site for the configuration of shedule filters and building a shift shedule.
+Telegram bot used for the requesting a shift for specific dates and send them to backend server.
+Rest api send and pull data about users,shift,permision.
+Backend create a logic for the auto shedule creating and cofiguration using.
+Web Fronend give a option to made a auto shedule and/or change it manualy.
+
+
+Shift Scheduler — a free-infrastructure system that collects workers' shift availability and automatically builds work schedules based on rules defined by the user.
+
+The system has four parts:
+
+Telegram bot — workers use it to submit their availability for specific dates, and it delivers each worker their final schedule. It sends and receives all data through the backend.
+Backend server (REST API) — the core of the system. It stores and serves data (users, shifts, requests, permissions, schedules) and runs the auto-scheduling logic using a constraint solver.
+PostgreSQL database — stores all data.
+Web frontend — where the admin configures the scheduling rules and filters, triggers the automatic build, and edits the result manually before publishing.
+
+here are two roles: an admin configures the shifts and rules, and workers only submit requests and receive their schedule. The scheduler builds rosters with a constraint solver (Google OR-Tools), respecting hard rules (availability, coverage, no double-booking) and optimizing soft ones (fair shift distribution, balanced night shifts). Everything runs on a free always-on cloud server, so hosting costs nothing.
+
+Tech stack: Python, FastAPI, PostgreSQL, aiogram (Telegram bot), OR-Tools (scheduling engine), web frontend (HTML/CSS/JS).
+
+
+
+
+
+
+
+3)Made a printscreens for the 5 prohect to visit card
+4)
+5)
